@@ -4,3 +4,4 @@ PyYAML
 python-dotenv
 pytest
 Jinja2
+prometheus_client

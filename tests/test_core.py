@@ -31,3 +31,11 @@ def test_parameterized_templates():
     )
     assert "500m" in res["resourcequota"]
     assert "1Gi" in res["resourcequota"]
+
+
+def test_monitor_increment():
+    # just ensure the function exists and is callable
+    from namespace_service import monitor
+
+    monitor.inc_created()
+    monitor.inc_created(2)

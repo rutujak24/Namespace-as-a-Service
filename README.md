@@ -2,7 +2,7 @@
 
 Minimal CLI to provision isolated Kubernetes namespaces with basic resource quotas and limit ranges.
 
-Milestone 1: scaffold project and a CLI stub.
+Milestone 1: add starter pack and a CLI stub.
 
 Quickstart
 ---------
