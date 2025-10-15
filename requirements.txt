@@ -3,3 +3,4 @@ kubernetes
 PyYAML
 python-dotenv
 pytest
+Jinja2
