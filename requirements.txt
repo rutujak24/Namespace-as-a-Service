@@ -1,0 +1,5 @@
+click
+kubernetes
+PyYAML
+python-dotenv
+pytest

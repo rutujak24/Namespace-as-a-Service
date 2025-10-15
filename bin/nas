@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+"""CLI entrypoint for Namespace-as-a-Service (stub)."""
+
+import sys
+
+import click
+
+from namespace_service import core
+
+
+@click.group()
+def cli():
+    """Namespace-as-a-Service CLI."""
+
+
+@cli.command()
+@click.argument("name")
+@click.option("--dry-run/--no-dry-run", default=True, help="Don't contact the cluster; print manifest")
+def create(name: str, dry_run: bool):
+    """Create a new Kubernetes namespace."""
+    res = core.create_namespace(name, dry_run=dry_run)
+    click.echo(res)
+
+
+@cli.command()
+@click.argument("name")
+@click.option("--dry-run/--no-dry-run", default=True)
+def delete(name: str, dry_run: bool):
+    """Delete an existing Kubernetes namespace."""
+    res = core.delete_namespace(name, dry_run=dry_run)
+    click.echo(res)
+
+
+def main():
+    cli()
+
+
+if __name__ == "__main__":
+    sys.exit(main())
