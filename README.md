@@ -1,4 +1,4 @@
-# Namespace-as-a-Service (Simplified)
+# Namespace-as-a-Service
 
 Minimal CLI to provision isolated Kubernetes namespaces with basic resource quotas and limit ranges.
 
