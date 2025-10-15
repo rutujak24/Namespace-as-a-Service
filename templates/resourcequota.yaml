@@ -4,7 +4,7 @@ metadata:
   name: {{ name }}-rq
 spec:
   hard:
-    requests.cpu: "2"
-    requests.memory: 4Gi
-    limits.cpu: "4"
-    limits.memory: 8Gi
+    requests.cpu: "{{ cpu_request | default('2') }}"
+    requests.memory: {{ memory_request | default('4Gi') }}
+    limits.cpu: "{{ cpu_limit | default('4') }}"
+    limits.memory: {{ memory_limit | default('8Gi') }}

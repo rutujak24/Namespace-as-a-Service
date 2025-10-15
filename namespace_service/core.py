@@ -33,7 +33,14 @@ def prepare_namespace_manifest(name: str, labels: Dict[str, str] | None = None) 
     }
 
 
-def create_namespace(name: str, dry_run: bool = True) -> Dict:
+def create_namespace(
+    name: str,
+    dry_run: bool = True,
+    cpu_request: str | None = None,
+    cpu_limit: str | None = None,
+    memory_request: str | None = None,
+    memory_limit: str | None = None,
+) -> Dict:
     """Create a namespace (stub).
 
     For Milestone 1 this will return the manifest and a message. Later we'll
@@ -47,8 +54,20 @@ def create_namespace(name: str, dry_run: bool = True) -> Dict:
     ns_manifest = prepare_namespace_manifest(name)
     rq_tmpl = env.get_template("resourcequota.yaml")
     lr_tmpl = env.get_template("limitrange.yaml")
-    rq = rq_tmpl.render(name=name)
-    lr = lr_tmpl.render(name=name)
+    rq = rq_tmpl.render(
+        name=name,
+        cpu_request=cpu_request,
+        cpu_limit=cpu_limit,
+        memory_request=memory_request,
+        memory_limit=memory_limit,
+    )
+    lr = lr_tmpl.render(
+        name=name,
+        default_memory=memory_limit,
+        default_cpu=cpu_limit,
+        request_memory=memory_request,
+        request_cpu=cpu_request,
+    )
 
     # Return combined artifacts for now
     return {"status": "dry-run" if dry_run else "not-implemented", "namespace": ns_manifest, "resourcequota": rq, "limitrange": lr}
