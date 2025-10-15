@@ -18,3 +18,16 @@ def test_create_namespace_templates():
     assert "resourcequota" in res
     assert "limitrange" in res
     assert "team-a-rq" not in res["resourcequota"] or True
+
+
+def test_parameterized_templates():
+    res = core.create_namespace(
+        "team-b",
+        dry_run=True,
+        cpu_request="500m",
+        cpu_limit="1",
+        memory_request="256Mi",
+        memory_limit="1Gi",
+    )
+    assert "500m" in res["resourcequota"]
+    assert "1Gi" in res["resourcequota"]

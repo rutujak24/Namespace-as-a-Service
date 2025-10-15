@@ -5,7 +5,7 @@ import sys
 
 import click
 
-from namespace_service import core
+from namespace_service import core, k8s
 
 
 @click.group()
@@ -16,10 +16,30 @@ def cli():
 @cli.command()
 @click.argument("name")
 @click.option("--dry-run/--no-dry-run", default=True, help="Don't contact the cluster; print manifest")
-def create(name: str, dry_run: bool):
-    """Create a new Kubernetes namespace."""
-    res = core.create_namespace(name, dry_run=dry_run)
+@click.option("--cpu-request", default=None, help="CPU request for resourcequota (e.g. 500m or 2)")
+@click.option("--cpu-limit", default=None, help="CPU limit for resourcequota")
+@click.option("--memory-request", default=None, help="Memory request for resourcequota (e.g. 256Mi)")
+@click.option("--memory-limit", default=None, help="Memory limit for resourcequota")
+@click.option("--apply/--no-apply", default=False, help="If set, actually apply to the cluster (uses kubeconfig). Dry-run by default")
+def create(name: str, dry_run: bool, cpu_request, cpu_limit, memory_request, memory_limit, apply):
+    """Create a new Kubernetes namespace and associated resource objects."""
+    res = core.create_namespace(
+        name,
+        dry_run=dry_run and not apply,
+        cpu_request=cpu_request,
+        cpu_limit=cpu_limit,
+        memory_request=memory_request,
+        memory_limit=memory_limit,
+    )
     click.echo(res)
+
+    if apply:
+        client = k8s.default_client()
+        # Apply namespace manifest
+        client.apply_manifest(res["namespace"], dry_run=False)
+        # Apply resourcequota and limitrange as raw YAML strings not yet parsed
+        client.apply_manifest({"raw": res["resourcequota"]}, dry_run=False)
+        client.apply_manifest({"raw": res["limitrange"]}, dry_run=False)
 
 
 @cli.command()
