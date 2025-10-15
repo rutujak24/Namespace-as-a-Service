@@ -2,7 +2,9 @@
 
 Minimal CLI to provision isolated Kubernetes namespaces with basic resource quotas and limit ranges.
 
-Milestone 1: add starter pack and a CLI stub.
+This repository is a small Namespace-as-a-Service prototype implemented as an opinionated CLI. It renders parameterized Kubernetes manifests (Namespace, ResourceQuota, LimitRange) and provides a dry-run mode for safe testing.
+
+Milestone 1–5: scaffold, template rendering, CLI, tests, CI, and a monitoring stub have been implemented. See "Project status" below for details.
 
 Quickstart
 ---------
@@ -22,3 +24,35 @@ pip install -r requirements.txt
 ```
 
 See `examples/create_namespace.sh` for a kubectl equivalent.
+
+Project status — current milestone
+---------------------------------
+
+Implemented (prototype):
+- CLI `bin/nas` (Click) with `create` and `delete` commands. Dry-run is the default mode.
+- Parameterized Jinja2 templates in `templates/` for `ResourceQuota` and `LimitRange` and a sample `Namespace`.
+- Template rendering pipeline in `namespace_service/core.py` that combines namespace + resource manifests.
+- Lightweight `namespace_service/k8s.py` wrapper prepared for applying manifests (dry-run safe stub).
+- Basic unit tests in `tests/` that validate manifest rendering and a monitoring stub.
+- GitHub Actions CI workflow that runs tests.
+- Monitoring stub with Prometheus metrics in `namespace_service/monitor.py`.
+
+Limitations / Not implemented (production items):
+- `k8s.K8sClient.apply_manifest()` is a placeholder. It does not perform server-side apply or handle API errors.
+- No API server, web UI, authentication, or RBAC automation. The current flow is CLI-only.
+- Templates are rendered to YAML strings; applying them should parse and validate YAML before sending to the API.
+- More comprehensive tests (mocks for the real K8s client and e2e tests) are required.
+
+Is this a Namespace-as-a-Service offering?
+- Short answer: Yes, as a developer-facing prototype. It provides self-service provisioning via CLI, manifest generation, and a path to apply resources. To be a robust, multi-tenant Namespace-as-a-Service you'd still need to implement API, RBAC automation, hardened apply logic, and full testing.
+
+Next steps to productionize (prioritized):
+1. Implement Kubernetes apply/delete with server-side apply and YAML parsing.
+2. Add authentication and an API layer (HTTP/gRPC) so teams can request namespaces programmatically.
+3. Automate RBAC and tenant isolation (RoleBindings, quotas enforcement).
+4. Expand tests: mock the Kubernetes client, add e2e with kind in CI, add linting and coverage reporting.
+5. Improve observability and operational docs (metrics dashboards, runbook).
+
+Contributing
+------------
+Contributions are welcome. Please open an issue or submit a pull request against the milestone branches. See the tests and CI for the current validation setup.
