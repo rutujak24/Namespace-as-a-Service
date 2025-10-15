@@ -8,6 +8,7 @@ Kubernetes Python client.
 from typing import Dict
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from pathlib import Path
+from . import monitor
 
 
 TEMPLATES_DIR = Path(__file__).resolve().parents[1] / "templates"
@@ -70,6 +71,9 @@ def create_namespace(
     )
 
     # Return combined artifacts for now
+    if not dry_run:
+        # increment created counter when actually applied
+        monitor.inc_created()
     return {"status": "dry-run" if dry_run else "not-implemented", "namespace": ns_manifest, "resourcequota": rq, "limitrange": lr}
 
 

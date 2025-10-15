@@ -6,6 +6,7 @@ import sys
 import click
 
 from namespace_service import core, k8s
+from prometheus_client import generate_latest
 
 
 @click.group()
